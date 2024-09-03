@@ -3,6 +3,7 @@ package com.example.api_test.services.impl;
 import com.example.api_test.domain.User;
 import com.example.api_test.repositories.UserRepository;
 import com.example.api_test.services.UserService;
+import com.example.api_test.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Integer id) {
         Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+        return user.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
     }
 }
