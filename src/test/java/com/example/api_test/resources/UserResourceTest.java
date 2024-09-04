@@ -13,14 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserResourceTest {
@@ -92,7 +91,6 @@ class UserResourceTest {
         assertNotNull(response.getHeaders().get("Location"));
     }
 
-
     @Test
     void whenUpdateThenReturnSuccess() {
         when(service.update(any())).thenReturn(user);
@@ -108,6 +106,18 @@ class UserResourceTest {
         assertEquals(ID, response.getBody().getId());
         assertEquals(NAME, response.getBody().getName());
         assertEquals(EMAIL, response.getBody().getEmail());
+    }
+
+    @Test
+    void whenDeleteThenReturnSuccess() {
+        doNothing().when(service).delete(anyInt());
+
+        ResponseEntity<Void> response = resource.delete(ID);
+
+        assertNotNull(response);
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(service, times(1)).delete(anyInt());
     }
 
     private void startUser() {
