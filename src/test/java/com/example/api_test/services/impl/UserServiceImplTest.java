@@ -3,19 +3,18 @@ package com.example.api_test.services.impl;
 import com.example.api_test.domain.User;
 import com.example.api_test.domain.dto.UserDTO;
 import com.example.api_test.repositories.UserRepository;
+import com.example.api_test.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +52,16 @@ class UserServiceImplTest {
         assertEquals(ID, response.getId());
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
+    }
+
+    @Test
+    void whenFindByIdThenReturnObjectNotFoundException() {
+        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+
+        ObjectNotFoundException ex = assertThrows(ObjectNotFoundException.class, () -> service.findById(ID));
+
+        assertEquals(ObjectNotFoundException.class, ex.getClass());
+        assertEquals("Objeto não encontrado", ex.getMessage());
     }
 
     @Test
