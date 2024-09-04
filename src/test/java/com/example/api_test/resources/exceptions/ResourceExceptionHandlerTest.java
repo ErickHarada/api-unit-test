@@ -1,5 +1,6 @@
 package com.example.api_test.resources.exceptions;
 
+import com.example.api_test.services.exceptions.DataIntegrityViolationException;
 import com.example.api_test.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,19 @@ class ResourceExceptionHandlerTest {
     }
 
     @Test
-    void whenDataIntegratyViolationExceptionThenReturnResponseEntity() {
+    void whenDataIntegrityViolationExceptionThenReturnResponseEntity() {
+        ResponseEntity<StandardError> response = exceptionHandler
+                .dataIntegrityViolation(
+                        new DataIntegrityViolationException("Email já cadastrado"),
+                        new MockHttpServletRequest()
+                );
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(StandardError.class, response.getBody().getClass());
+        assertEquals("Email já cadastrado", response.getBody().getError());
+        assertEquals(400, response.getBody().getStatus());
     }
 }
